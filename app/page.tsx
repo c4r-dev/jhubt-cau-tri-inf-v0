@@ -42,10 +42,10 @@ export default function Home() {
       .then(hintJson => setHintData(hintJson))
       .catch(error => console.error('Error loading hint data:', error));
     
-    // Scroll to bottom on first render
+    // Scroll to top on first render
     setTimeout(() => {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    }, 500);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   }, []);
 
   if (!data) {
@@ -69,8 +69,8 @@ export default function Home() {
               border: '1px solid black',
               textAlign: 'center'
             }}>
-              <h3 style={{ color: '#2563eb', fontSize: '1.5rem', margin: 0, fontWeight: 'normal' }}>
-                Does regular physical exercise causally improve academic performance in students?
+              <h3 style={{ color: '#6F00FF', fontSize: '1.5rem', margin: 0, fontWeight: 'bold' }}>
+                {data['Causal Hypothesis']}
               </h3>
             </div>
           </div>
@@ -90,11 +90,11 @@ export default function Home() {
                   Study {index + 1}
                 </h3>
                 <h4 style={{ 
-                  backgroundColor: '#dbeafe', 
+                  backgroundColor: '#6F00FF1A', 
                   padding: '0.5rem', 
                   borderRadius: '4px', 
                   marginBottom: '1rem',
-                  color: '#1e40af'
+                  color: '#6F00FF'
                 }}>
                   {study.type}
                 </h4>
@@ -149,7 +149,7 @@ export default function Home() {
                 width: '100%',
                 minHeight: '150px',
                 padding: '1rem',
-                border: '1px solid #d1d5db',
+                border: '1px solid black',
                 borderRadius: '4px',
                 fontSize: '1rem',
                 fontFamily: 'inherit',
@@ -188,7 +188,7 @@ export default function Home() {
               </h3>
               <div 
                 style={{ 
-                  color: '#2563eb', 
+                  color: '#6F00FF', 
                   cursor: 'pointer', 
                   marginBottom: '1rem',
                   fontSize: '0.9rem'
@@ -230,7 +230,7 @@ export default function Home() {
                   width: '100%',
                   minHeight: '150px',
                   padding: '1rem',
-                  border: '1px solid #d1d5db',
+                  border: '1px solid black',
                   borderRadius: '4px',
                   fontSize: '1rem',
                   fontFamily: 'inherit',
@@ -283,7 +283,7 @@ export default function Home() {
                   width: '100%',
                   minHeight: '150px',
                   padding: '1rem',
-                  border: '1px solid #d1d5db',
+                  border: '1px solid black',
                   borderRadius: '4px',
                   fontSize: '1rem',
                   fontFamily: 'inherit',
@@ -357,23 +357,23 @@ export default function Home() {
                 {/* Current user's proposal first */}
                 <div style={{
                   marginBottom: '1rem',
-                  padding: '1.5rem',
+                  padding: '1rem',
                   backgroundColor: '#ffffff',
                   borderRadius: '4px',
                   border: '1px solid black'
                 }}>
                   <h4 style={{ 
-                    backgroundColor: '#dbeafe', 
+                    backgroundColor: '#6F00FF1A', 
                     padding: '0.5rem', 
                     borderRadius: '4px', 
                     marginBottom: '1rem',
-                    color: '#1e40af',
+                    color: '#6F00FF',
                     fontSize: '1rem',
                     fontWeight: 'bold'
                   }}>
-                    <div style={{ marginLeft: '-3px' }}>Your Proposal:</div>
+                    <div>Your Proposal:</div>
                   </h4>
-                  <div style={{ fontSize: '0.9rem' }}>
+                  <div style={{ fontSize: '0.9rem', marginLeft: '6px' }}>
                     {thirdResponse}
                   </div>
                 </div>
@@ -387,7 +387,7 @@ export default function Home() {
                     borderRadius: '4px',
                     border: '1px solid black'
                   }}>
-                    <div style={{ fontSize: '0.9rem' }}>
+                    <div style={{ fontSize: '0.9rem', marginLeft: '6px' }}>
                       {submission.thirdResponse}
                     </div>
                   </div>
