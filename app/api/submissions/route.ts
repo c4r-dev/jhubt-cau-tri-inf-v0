@@ -2,13 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '../../../lib/mongodb';
 import mongoose from 'mongoose';
 
-// Define the submission schema
-const submissionSchema = new mongoose.Schema({
-  tableAnalysis: {
+
+// Define the trianCausalInference schema
+const trianCausalInferenceSchema = new mongoose.Schema({
+  firstResponse: {
     type: String,
     required: true
   },
-  graphAnalysis: {
+  secondResponse: {
+    type: String,
+    required: true
+  },
+  thirdResponse: {
     type: String,
     required: true
   },
@@ -18,35 +23,8 @@ const submissionSchema = new mongoose.Schema({
   }
 });
 
-// Define the cleanCodeCorrRead schema for userData
-const cleanCodeCorrReadSchema = new mongoose.Schema({
-  sessionId: {
-    type: String,
-    required: true
-  },
-  startTime: {
-    type: Number,
-    required: true
-  },
-  responses: [{
-    questionIndex: String,
-    questionName: String,
-    codeVersion: String,
-    subQuestion: Number,
-    subQuestionText: String,
-    answer: String,
-    timeSpent: Number,
-    timestamp: Number
-  }],
-  timestamp: {
-    type: Date,
-    default: Date.now
-  }
-});
-
-// Create or get the models
-const Submission = mongoose.models.dinstimneg || mongoose.model('dinstimneg', submissionSchema);
-const CleanCodeCorrRead = mongoose.models.cleanCodeCorrRead || mongoose.model('cleanCodeCorrRead', cleanCodeCorrReadSchema);
+// Create or get the model
+const TrianCausalInference = mongoose.models.trianCausalInference || mongoose.model('trianCausalInference', trianCausalInferenceSchema);
 
 export async function POST(request: NextRequest) {
   try {
@@ -61,31 +39,24 @@ export async function POST(request: NextRequest) {
     
     const body = await request.json();
     
-    // Check if this is userData submission (for cleanCodeCorrRead)
-    if (body.sessionId && body.responses) {
-      const cleanCodeSubmission = new CleanCodeCorrRead(body);
-      await cleanCodeSubmission.save();
-      return NextResponse.json({ success: true, id: cleanCodeSubmission._id, collection: 'cleanCodeCorrRead' });
-    }
+    const { firstResponse, secondResponse, thirdResponse } = body;
     
-    // Original submission logic for tableAnalysis/graphAnalysis
-    const { tableAnalysis, graphAnalysis } = body;
-    
-    if (!tableAnalysis || !graphAnalysis) {
+    if (!firstResponse || !secondResponse || !thirdResponse) {
       return NextResponse.json(
-        { error: 'Both tableAnalysis and graphAnalysis are required' },
+        { error: 'All three responses are required' },
         { status: 400 }
       );
     }
     
-    const submission = new Submission({
-      tableAnalysis,
-      graphAnalysis
+    const trianSubmission = new TrianCausalInference({
+      firstResponse,
+      secondResponse,
+      thirdResponse
     });
     
-    await submission.save();
+    await trianSubmission.save();
     
-    return NextResponse.json({ success: true, id: submission._id });
+    return NextResponse.json({ success: true, id: trianSubmission._id, collection: 'trianCausalInference' });
   } catch (error) {
     console.error('Error saving submission:', error);
     return NextResponse.json(
@@ -106,14 +77,14 @@ export async function GET() {
     
     await dbConnect();
     
-    // Get the last 30 submissions from cleanCodeCorrRead, sorted by timestamp descending
-    const cleanCodeSubmissions = await CleanCodeCorrRead
+    // Get the last 15 submissions from trianCausalInference, sorted by timestamp descending
+    const submissions = await TrianCausalInference
       .find({})
       .sort({ timestamp: -1 })
-      .limit(30)
+      .limit(15)
       .lean();
     
-    return NextResponse.json({ cleanCodeSubmissions });
+    return NextResponse.json({ submissions });
   } catch (error) {
     console.error('Error fetching submissions:', error);
     return NextResponse.json(
