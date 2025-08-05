@@ -34,15 +34,26 @@ export default function Home() {
     <div className="container">
       <main className="main-content">
         <section className="intro-section">
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '2rem', textAlign: 'center' }}>
-            Triangulation in Causal Inference
-          </h1>
-          <h2 style={{ color: '#2563eb', fontSize: '1.5rem', textAlign: 'center', marginBottom: '2rem' }}>
-            Causal Hupothesis
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '2rem', textAlign: 'center' }}>
+            Causal Hypothesis
           </h2>
-          <p style={{ fontSize: '1.2rem', color: '#2563eb', textAlign: 'center', marginBottom: '3rem' }}>
-            "{data['Causal Hypothesis']}"
-          </p>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            marginBottom: '2rem' 
+          }}>
+            <div style={{ 
+              backgroundColor: '#f8fafc', 
+              padding: '1.0rem', 
+              borderRadius: '8px',
+              border: '1px solid #e2e8f0',
+              textAlign: 'center'
+            }}>
+              <h3 style={{ color: '#2563eb', fontSize: '1.5rem', margin: 0 }}>
+                Does regular physical exercise causally improve academic performance in students?
+              </h3>
+            </div>
+          </div>
         </section>
         
         <section className="studies-section">
