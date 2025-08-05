@@ -17,53 +17,70 @@ function csvToJson(csvFilePath, jsonFilePath) {
         
         const headers = rows[0];
         const jsonArray = [];
-        let currentExperiment = null;
-        
-        // Find the index of "Dependent Variable" column
-        const dependentVariableIndex = headers.indexOf('Dependent Variable');
+        let currentStudy = null;
         
         for (let i = 1; i < rows.length; i++) {
             const values = rows[i];
             
-            // Check if this is a new experiment (Example is not null)
-            const hasExample = values[0] && values[0].trim() !== '';
+            // Check if this is a new study (has causal hypothesis)
+            const hasCausalHypothesis = values[0] && values[0].trim() !== '';
             
-            if (hasExample) {
-                // Create new experiment object with only the first 4 columns
-                currentExperiment = {};
-                for (let j = 0; j <= dependentVariableIndex; j++) {
-                    currentExperiment[headers[j]] = values[j] || '';
+            if (hasCausalHypothesis) {
+                // Create new study object
+                currentStudy = {
+                    "Causal Hypothesis": values[0] || '',
+                    studies: []
+                };
+                
+                // Add the first study (Observational - Human)
+                if (values[1] && values[1].trim() !== '') {
+                    const study1 = {
+                        type: values[1],
+                        population: values[2] || '',
+                        methodology: values[3] || '',
+                        keyFindings: values[4] || '',
+                        majorLimitations: values[5] ? [values[5]] : []
+                    };
+                    currentStudy.studies.push(study1);
                 }
                 
-                // Add columns after "Dependent Variable" as subElements
-                if (dependentVariableIndex >= 0 && dependentVariableIndex + 1 < headers.length) {
-                    const subElement = {};
-                    for (let j = dependentVariableIndex + 1; j < headers.length; j++) {
-                        if (values[j]) {
-                            subElement[headers[j]] = values[j];
-                        }
-                    }
-                    
-                    if (Object.keys(subElement).length > 0) {
-                        currentExperiment.subElements = [subElement];
-                    }
+                // Add the second study (Experimental - Animal Model)
+                if (values[6] && values[6].trim() !== '') {
+                    const study2 = {
+                        type: values[6],
+                        population: values[7] || '',
+                        methodology: values[8] || '',
+                        keyFindings: values[9] || '',
+                        majorLimitations: values[10] ? [values[10]] : []
+                    };
+                    currentStudy.studies.push(study2);
                 }
                 
-                jsonArray.push(currentExperiment);
-            } else if (currentExperiment) {
-                // This is a sub-element, add it as additional data to the current experiment
-                const subElement = {};
-                headers.forEach((header, index) => {
-                    if (values[index]) {
-                        subElement[header] = values[index];
-                    }
-                });
-                
-                // Add sub-element data to current experiment
-                if (!currentExperiment.subElements) {
-                    currentExperiment.subElements = [];
+                // Add hint content if present
+                if (values[11]) {
+                    currentStudy.hintContent = [values[11]];
                 }
-                currentExperiment.subElements.push(subElement);
+                
+                jsonArray.push(currentStudy);
+            } else if (currentStudy) {
+                // This is additional data for the current study
+                // Add to major limitations of study 1 if present
+                if (values[5] && values[5].trim() !== '' && currentStudy.studies[0]) {
+                    currentStudy.studies[0].majorLimitations.push(values[5]);
+                }
+                
+                // Add to major limitations of study 2 if present
+                if (values[10] && values[10].trim() !== '' && currentStudy.studies[1]) {
+                    currentStudy.studies[1].majorLimitations.push(values[10]);
+                }
+                
+                // Add to hint content if present
+                if (values[11] && values[11].trim() !== '') {
+                    if (!currentStudy.hintContent) {
+                        currentStudy.hintContent = [];
+                    }
+                    currentStudy.hintContent.push(values[11]);
+                }
             }
         }
         
