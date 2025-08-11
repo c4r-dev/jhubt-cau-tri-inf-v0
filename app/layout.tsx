@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
 
       <head>
-        <title>Triangulation in Causal Inference</title>
+        <title>Triangulate the evidence</title>
         <meta name="description" content="Triangulation in Causal Inference" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
@@ -41,7 +41,7 @@ export default function RootLayout({
             />
           </button>
           <div className="title-container"> {/* Title container class */}
-            <h1 className="title">Triangulation in Causal Inference</h1> {/* Title class */}
+            <h1 className="title">Triangulate the evidence</h1> {/* Title class */}
           </div>
         </header>
 

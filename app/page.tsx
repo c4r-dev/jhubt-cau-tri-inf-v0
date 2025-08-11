@@ -30,6 +30,8 @@ export default function Home() {
   const [thirdResponse, setThirdResponse] = useState('');
   const [submissionComplete, setSubmissionComplete] = useState(false);
   const [submissions, setSubmissions] = useState([]);
+  const [hoveredSubmission, setHoveredSubmission] = useState<any>(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     fetch('/data.json')
@@ -48,6 +50,19 @@ export default function Home() {
     }, 100);
   }, []);
 
+  const handleMouseEnter = (submission: any, event: React.MouseEvent) => {
+    setHoveredSubmission(submission);
+    setTooltipPosition({ x: event.clientX, y: event.clientY });
+  };
+
+  const handleMouseMove = (event: React.MouseEvent) => {
+    setTooltipPosition({ x: event.clientX, y: event.clientY });
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredSubmission(null);
+  };
+
   if (!data) {
     return <div>Loading...</div>;
   }
@@ -55,6 +70,50 @@ export default function Home() {
 
   return (
     <div className="container">
+      {hoveredSubmission && (
+        <div
+          style={{
+            position: 'fixed',
+            left: tooltipPosition.x + 15,
+            top: tooltipPosition.y - 10,
+            backgroundColor: '#ffffff',
+            border: '2px solid #6F00FF',
+            borderRadius: '8px',
+            padding: '1rem',
+            maxWidth: '400px',
+            zIndex: 1000,
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            pointerEvents: 'none'
+          }}
+        >
+          <div style={{ marginBottom: '1rem' }}>
+            <h4 style={{ 
+              color: '#6F00FF', 
+              fontWeight: 'bold', 
+              fontSize: '1rem', 
+              marginBottom: '0.5rem' 
+            }}>
+              Errors solved
+            </h4>
+            <div style={{ fontSize: '0.9rem', color: '#333' }}>
+              {hoveredSubmission.firstResponse}
+            </div>
+          </div>
+          <div>
+            <h4 style={{ 
+              color: '#6F00FF', 
+              fontWeight: 'bold', 
+              fontSize: '1rem', 
+              marginBottom: '0.5rem' 
+            }}>
+              Remaining error sources
+            </h4>
+            <div style={{ fontSize: '0.9rem', color: '#333' }}>
+              {hoveredSubmission.secondResponse}
+            </div>
+          </div>
+        </div>
+      )}
       <main className="main-content">
         <section className="intro-section">
           <div style={{ 
@@ -355,13 +414,19 @@ export default function Home() {
               </h3>
               <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
                 {/* Current user's proposal first */}
-                <div style={{
-                  marginBottom: '1rem',
-                  padding: '1rem',
-                  backgroundColor: '#ffffff',
-                  borderRadius: '4px',
-                  border: '1px solid black'
-                }}>
+                <div 
+                  style={{
+                    marginBottom: '1rem',
+                    padding: '1rem',
+                    backgroundColor: '#ffffff',
+                    borderRadius: '4px',
+                    border: '1px solid black',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => handleMouseEnter({ firstResponse: userResponse, secondResponse: secondResponse }, e)}
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleMouseLeave}
+                >
                   <h4 style={{ 
                     backgroundColor: '#6F00FF1A', 
                     padding: '0.5rem', 
@@ -380,13 +445,20 @@ export default function Home() {
                 
                 {/* Other submissions */}
                 {submissions.map((submission: any) => (
-                  <div key={submission._id} style={{
-                    marginBottom: '1rem',
-                    padding: '1rem',
-                    backgroundColor: '#ffffff',
-                    borderRadius: '4px',
-                    border: '1px solid black'
-                  }}>
+                  <div 
+                    key={submission._id} 
+                    style={{
+                      marginBottom: '1rem',
+                      padding: '1rem',
+                      backgroundColor: '#ffffff',
+                      borderRadius: '4px',
+                      border: '1px solid black',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => handleMouseEnter(submission, e)}
+                    onMouseMove={handleMouseMove}
+                    onMouseLeave={handleMouseLeave}
+                  >
                     <div style={{ fontSize: '0.9rem', marginLeft: '6px' }}>
                       {submission.thirdResponse}
                     </div>
